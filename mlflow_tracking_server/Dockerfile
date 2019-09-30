@@ -1,16 +1,12 @@
-FROM python:3.7
-
-LABEL maintainer "Florian Muchow <flmuchow@gmail.com>"
-
-RUN pip install mlflow==1.3.0 && \
-    pip install awscli --upgrade --user && \
-    pip install boto3==1.9.240
+FROM python:3.7-alpine
 
 ENV PORT 5000
-ENV AWS_BUCKET bucket
-ENV AWS_ACCESS_KEY_ID aws_id
-ENV AWS_SECRET_ACCESS_KEY aws_key
 
+COPY files/requirements.txt /
 COPY files/run.sh /
+
+RUN apk --no-cache --update add g++ make && \
+    pip --no-cache-dir install --upgrade -r /requirements.txt && \
+    rm -rf /requirements.txt
 
 ENTRYPOINT ["/run.sh"]
